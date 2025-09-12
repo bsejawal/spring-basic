@@ -4,15 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9fa5bcac-443a-4634-9b9f-a6c9f2d0e3e7" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/sejawal/controller/CartController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/sejawal/model/Cart.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/sejawal/model/ListCart.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/sejawal/model/Product.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/sejawal/service/CartService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sejawal/SpringBasicApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sejawal/SpringBasicApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/sejawal/SpringBasicApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/sejawal/SpringBasicApplicationTests.java" afterDir="false" />
-    </list>
+    <list default="true" id="9fa5bcac-443a-4634-9b9f-a6c9f2d0e3e7" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -36,12 +28,19 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Gradle.Build spring-basic.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
+    "Spring Boot.SpringBasicApplication (1).executor": "Run",
+    "git-widget-placeholder": "rest-client-consume",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "/Users/bsejawal/Desktop/projects/spring-basic/src/main/java/com/sejawal",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "vue.rearranger.settings.migration": "true"
   }
@@ -51,7 +50,7 @@
       <recent name="$PROJECT_DIR$/src/main/java/com/sejawal" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Spring Boot.SpringBasicApplication (1)">
     <configuration default="true" type="JetRunConfigurationType">
       <module name="spring-basic" />
       <method v="2">
@@ -63,6 +62,19 @@
       <option name="filePath" />
       <method v="2" />
     </configuration>
+    <configuration name="SpringBasicApplication (1)" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <module name="spring-basic.main" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.sejawal.SpringBasicApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.sejawal.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="SpringBasicApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <module name="spring-basic.main" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.demo.SpringBasicApplication" />
@@ -70,6 +82,11 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Spring Boot.SpringBasicApplication (1)" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -86,7 +103,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1757627651199</updated>
-      <workItem from="1757627652418" duration="220000" />
+      <workItem from="1757627652418" duration="1611000" />
     </task>
     <servers />
   </component>
