@@ -1,4 +1,4 @@
-package com.sejawal.model;
+package com.sejawal.model.cart;
 
 import lombok.Data;
 
