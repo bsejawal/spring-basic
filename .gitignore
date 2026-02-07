@@ -13,3 +13,6 @@ target/
 *.ipr
 .gradle
 build/
+.idea/*
+.gradle/
+.ai/
