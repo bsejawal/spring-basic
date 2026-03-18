@@ -11,8 +11,6 @@ target/
 *.iws
 *.iml
 *.ipr
-.gradle
+#.gradle
 build/
 .ai/
-.idea/**
-.gradle/**
