@@ -1,7 +1,5 @@
 package com.sejawal.controller;
 
-import com.sejawal.model.ListCart;
-import com.sejawal.service.CartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,11 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class CartController {
 
-    private final CartService cartService;
-
     @GetMapping("/carts")
-    public ResponseEntity<ListCart> getData(){
-        ListCart carts = cartService.getAllCart();
-        return ResponseEntity.ok(carts);
+    public ResponseEntity<String> getData(){
+        return ResponseEntity.ok("OKKKKK");
     }
 }
