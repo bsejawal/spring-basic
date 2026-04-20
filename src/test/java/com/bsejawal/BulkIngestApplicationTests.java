@@ -1,13 +1,12 @@
-package com.sejawal;
+package com.bsejawal;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class SpringBasicApplicationTests {
+class BulkIngestApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
-
+    @Test
+    void contextLoads() {
+    }
 }

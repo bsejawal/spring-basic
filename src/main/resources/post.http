@@ -1,0 +1,128 @@
+POST http://localhost:8080/api/accounts/bulk
+Content-Type: application/json
+
+[
+  {
+    "accountNo": "366555",
+    "palAccount": "89766",
+    "name": "jim adams",
+    "positions": [
+      { "stock": "nvda", "value": 1000 },
+      { "stock": "tsla", "value": 2000 },
+      { "stock": "goog", "value": 3300 }
+    ],
+    "address": "1101 s. park",
+    "city": "austin",
+    "state": "texas"
+  },
+  {
+    "accountNo": "477888",
+    "palAccount": "55421",
+    "name": "sarah lee",
+    "positions": [
+      { "stock": "msft", "value": 1500 },
+      { "stock": "amzn", "value": 2750 }
+    ],
+    "address": "220 market st",
+    "city": "dallas",
+    "state": "texas"
+  },
+  {
+    "accountNo": "588999",
+    "palAccount": "77881",
+    "name": "michael scott",
+    "positions": [
+      { "stock": "meta", "value": 1800 },
+      { "stock": "orcl", "value": 950 }
+    ],
+    "address": "12 lake view",
+    "city": "houston",
+    "state": "texas"
+  },
+  {
+    "accountNo": "611223",
+    "palAccount": "90012",
+    "name": "emily stone",
+    "positions": [
+      { "stock": "aapl", "value": 4200 },
+      { "stock": "crm", "value": 1250 }
+    ],
+    "address": "45 elm street",
+    "city": "san antonio",
+    "state": "texas"
+  },
+  {
+    "accountNo": "722334",
+    "palAccount": "44119",
+    "name": "daniel brown",
+    "positions": [
+      { "stock": "intc", "value": 700 },
+      { "stock": "amd", "value": 2100 },
+      { "stock": "avgo", "value": 3100 }
+    ],
+    "address": "88 river rd",
+    "city": "fort worth",
+    "state": "texas"
+  },
+  {
+    "accountNo": "833445",
+    "palAccount": "66330",
+    "name": "olivia white",
+    "positions": [
+      { "stock": "baba", "value": 800 },
+      { "stock": "shop", "value": 1600 }
+    ],
+    "address": "905 pine ave",
+    "city": "plano",
+    "state": "texas"
+  },
+  {
+    "accountNo": "944556",
+    "palAccount": "77145",
+    "name": "noah wilson",
+    "positions": [
+      { "stock": "adbe", "value": 2900 },
+      { "stock": "uber", "value": 650 }
+    ],
+    "address": "14 sunset blvd",
+    "city": "irving",
+    "state": "texas"
+  },
+  {
+    "accountNo": "155667",
+    "palAccount": "88256",
+    "name": "ava taylor",
+    "positions": [
+      { "stock": "snow", "value": 1450 },
+      { "stock": "pltr", "value": 980 }
+    ],
+    "address": "300 hillcrest",
+    "city": "frisco",
+    "state": "texas"
+  },
+  {
+    "accountNo": "266778",
+    "palAccount": "99367",
+    "name": "liam martin",
+    "positions": [
+      { "stock": "cost", "value": 2200 },
+      { "stock": "wmt", "value": 1300 }
+    ],
+    "address": "77 cedar lane",
+    "city": "arlington",
+    "state": "texas"
+  },
+  {
+    "accountNo": "377889",
+    "palAccount": "10478",
+    "name": "mia harris",
+    "positions": [
+      { "stock": "jnj", "value": 1700 },
+      { "stock": "pfe", "value": 900 },
+      { "stock": "abbv", "value": 1400 }
+    ],
+    "address": "501 oak circle",
+    "city": "lubbock",
+    "state": "texas"
+  }
+]
