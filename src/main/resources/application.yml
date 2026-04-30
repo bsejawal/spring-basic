@@ -1,32 +1,5 @@
 spring:
   application:
-    name: bulk-ingest
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/spring_batch
-    username: root
-    password:
-  jpa:
-    show-sql: true
-    hibernate:
-      ddl-auto: update
-    open-in-view: false
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
-        format_sql: true
-  batch:
-    job:
-      enabled: false
-    jdbc:
-      initialize-schema: always
-  jackson:
-    deserialization:
-      fail-on-unknown-properties: false
-
-server:
-  port: 8080
-
-logging:
-  level:
-    org.springframework.jdbc.core: info
+    name: spring-flux
+  mongodb:
+    uri: mongodb://localhost:27017/spring_flux
