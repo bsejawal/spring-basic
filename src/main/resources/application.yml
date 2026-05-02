@@ -6,6 +6,9 @@ spring:
       max-file-size: 5GB
       max-request-size: 5GB
       file-size-threshold: 10MB
+  mvc:
+    async:
+      request-timeout: 1h
 
 aws:
   s3:
