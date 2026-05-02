@@ -1,5 +1,17 @@
 spring:
   application:
-    name: spring-flux
-  mongodb:
-    uri: mongodb://localhost:27017/spring_flux
+    name: file-upload
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
+aws:
+  s3:
+    endpoint: http://localhost:4566
+    region: us-east-1
+    access-key: test
+    secret-key: test
+    bucket: bsejawal
+    folder: uploads
+    path-style-access: true
