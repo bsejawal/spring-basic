@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.http.async.SdkAsyncHttpClient;
+import software.amazon.awssdk.http.nio.netty.NettyNioAsyncHttpClient;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
 import software.amazon.awssdk.services.s3.S3Configuration;
@@ -15,11 +17,13 @@ import software.amazon.awssdk.services.s3.model.HeadBucketRequest;
 import software.amazon.awssdk.services.s3.model.NoSuchBucketException;
 
 import java.net.URI;
+import java.time.Duration;
 import java.util.concurrent.CompletionException;
 
 /**
- * Builds the {@link S3AsyncClient} bean. Multipart upload is enabled so that
- * large files are automatically split into parallel parts by the SDK.
+ * Builds the {@link S3AsyncClient} bean and the underlying Netty HTTP client.
+ * Multipart upload is enabled and tuned via {@link S3Properties} so large
+ * files are split into parallel parts by the SDK.
  */
 @Slf4j
 @Configuration
@@ -27,11 +31,26 @@ import java.util.concurrent.CompletionException;
 @RequiredArgsConstructor
 public class S3Config {
 
+    private static final long MB = 1024L * 1024L;
+
     private final S3Properties props;
 
     @Bean(destroyMethod = "close")
-    public S3AsyncClient s3AsyncClient() {
+    public SdkAsyncHttpClient s3HttpClient() {
+        return NettyNioAsyncHttpClient.builder()
+                .maxConcurrency(props.getHttpMaxConcurrency())
+                .maxPendingConnectionAcquires(props.getHttpMaxPendingAcquires())
+                .connectionAcquisitionTimeout(
+                        Duration.ofSeconds(props.getHttpAcquireTimeoutSeconds()))
+                .readTimeout(Duration.ofSeconds(props.getHttpReadTimeoutSeconds()))
+                .writeTimeout(Duration.ofSeconds(props.getHttpWriteTimeoutSeconds()))
+                .build();
+    }
+
+    @Bean(destroyMethod = "close")
+    public S3AsyncClient s3AsyncClient(SdkAsyncHttpClient httpClient) {
         S3AsyncClient client = S3AsyncClient.builder()
+                .httpClient(httpClient)
                 .endpointOverride(URI.create(props.getEndpoint()))
                 .region(Region.of(props.getRegion()))
                 .credentialsProvider(StaticCredentialsProvider.create(
@@ -40,6 +59,9 @@ public class S3Config {
                         .pathStyleAccessEnabled(props.isPathStyleAccess())
                         .build())
                 .multipartEnabled(true)
+                .multipartConfiguration(b -> b
+                        .thresholdInBytes(props.getMultipartThresholdMb() * MB)
+                        .minimumPartSizeInBytes(props.getMultipartPartSizeMb() * MB))
                 .build();
 
         if (props.isAutoCreateBucket()) {

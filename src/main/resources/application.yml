@@ -1,14 +1,10 @@
 spring:
   application:
     name: file-upload
-  servlet:
-    multipart:
-      max-file-size: 5GB
-      max-request-size: 5GB
-      file-size-threshold: 10MB
-  mvc:
-    async:
-      request-timeout: 1h
+  codec:
+    # Cap any in-memory buffering across reactive codecs (JSON, multipart headers, form fields).
+    # File content streams as PartEvents through to disk and is not bounded by this.
+    max-in-memory-size: 1MB
 
 aws:
   s3:

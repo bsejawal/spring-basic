@@ -7,8 +7,14 @@ import com.bsejawal.service.UploadService;
 import com.bsejawal.utils.S3KeyUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.core.io.buffer.DataBufferUtils;
+import org.springframework.http.MediaType;
+import org.springframework.http.codec.multipart.PartEvent;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 import software.amazon.awssdk.core.async.AsyncRequestBody;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
@@ -16,13 +22,13 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
+import java.nio.file.StandardOpenOption;
 
 /**
- * Non-blocking S3 upload implementation. Spools the multipart file to a temp
- * file on disk and streams it to S3 via {@link S3AsyncClient}, which auto-splits
- * large uploads into parallel multipart parts.
+ * Reactive S3 upload implementation. Streams a {@link PartEvent} flux straight
+ * to a temp file via {@link DataBufferUtils#write}, then uploads the file to S3
+ * with {@link S3AsyncClient} (which auto-splits large objects into parallel
+ * multipart parts).
  */
 @Slf4j
 @Service
@@ -33,37 +39,52 @@ public class UploadServiceImpl implements UploadService {
     private final S3Properties props;
 
     @Override
-    public CompletableFuture<UploadResponse> uploadFile(MultipartFile file) {
-        if (file == null || file.isEmpty()) {
-            throw new IllegalArgumentException("File is required and must not be empty");
+    public Mono<UploadResponse> uploadFile(String filename, MediaType contentType,
+                                           Flux<PartEvent> partEvents) {
+        if (partEvents == null) {
+            return Mono.error(new IllegalArgumentException("File is required"));
         }
 
-        String originalName = file.getOriginalFilename();
-        String contentType = file.getContentType();
-        long size = file.getSize();
-        String key = S3KeyUtils.buildKey(props.getFolder(), originalName);
+        String safeFilename = (filename == null) ? "" : filename;
+        String key = S3KeyUtils.buildKey(props.getFolder(), safeFilename);
+        String contentTypeStr = contentType != null ? contentType.toString() : null;
 
-        Path temp = spoolToTempFile(file);
+        return Mono.fromCallable(() -> Files.createTempFile("s3-upload-", ".tmp"))
+                .subscribeOn(Schedulers.boundedElastic())
+                .flatMap(temp -> spool(partEvents, temp).thenReturn(temp))
+                .flatMap(temp -> putToS3(temp, key, safeFilename, contentTypeStr)
+                        .doFinally(signal -> deleteQuietly(temp)))
+                .onErrorMap(this::wrap);
+    }
 
-        log.info("Starting upload: {} ({} bytes) -> s3://{}/{}",
-                originalName, size, props.getBucket(), key);
+    /**
+     * Pipe each {@link PartEvent}'s {@link DataBuffer} into the temp file.
+     * {@link DataBufferUtils#write} releases the buffers as it consumes them.
+     */
+    private Mono<Void> spool(Flux<PartEvent> events, Path destination) {
+        Flux<DataBuffer> content = events.map(PartEvent::content);
+        return DataBufferUtils.write(content, destination,
+                StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+    }
 
-        return s3.putObject(
-                        PutObjectRequest.builder()
-                                .bucket(props.getBucket())
-                                .key(key)
-                                .contentType(contentType)
-                                .build(),
-                        AsyncRequestBody.fromFile(temp))
-                .thenApply(resp -> buildResponse(originalName, contentType, size, key))
-                .exceptionallyCompose(ex -> {
-                    Throwable cause = (ex instanceof CompletionException && ex.getCause() != null)
-                            ? ex.getCause() : ex;
-                    return CompletableFuture.failedFuture(
-                            new FileUploadException(
-                                    "Failed to upload " + originalName + " to S3", cause));
-                })
-                .whenComplete((r, ex) -> deleteQuietly(temp));
+    private Mono<UploadResponse> putToS3(Path temp, String key,
+                                         String originalName, String contentType) {
+        return Mono.fromCallable(() -> Files.size(temp))
+                .subscribeOn(Schedulers.boundedElastic())
+                .flatMap(size -> {
+                    log.info("Starting upload: {} ({} bytes) -> s3://{}/{}",
+                            originalName, size, props.getBucket(), key);
+
+                    PutObjectRequest request = PutObjectRequest.builder()
+                            .bucket(props.getBucket())
+                            .key(key)
+                            .contentType(contentType)
+                            .build();
+
+                    return Mono.fromFuture(() ->
+                                    s3.putObject(request, AsyncRequestBody.fromFile(temp)))
+                            .map(resp -> buildResponse(originalName, contentType, size, key));
+                });
     }
 
     private UploadResponse buildResponse(String originalName, String contentType,
@@ -82,14 +103,14 @@ public class UploadServiceImpl implements UploadService {
                 .build();
     }
 
-    private Path spoolToTempFile(MultipartFile file) {
-        try {
-            Path temp = Files.createTempFile("s3-upload-", ".tmp");
-            file.transferTo(temp);
-            return temp;
-        } catch (IOException e) {
-            throw new FileUploadException("Failed to spool upload to temp file", e);
+    private Throwable wrap(Throwable ex) {
+        if (ex instanceof FileUploadException || ex instanceof IllegalArgumentException) {
+            return ex;
         }
+        String detail = ex.getMessage() != null && !ex.getMessage().isBlank()
+                ? ": " + ex.getMessage()
+                : "";
+        return new FileUploadException("Failed to upload file to S3" + detail, ex);
     }
 
     private void deleteQuietly(Path path) {
